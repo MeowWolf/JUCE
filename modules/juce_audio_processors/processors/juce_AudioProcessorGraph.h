@@ -364,6 +364,9 @@ public:
     void getStateInformation (juce::MemoryBlock&) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    // Unset this to allow different playheads in the graph
+    Atomic<int> shouldSetChildPlayheads = 1;
+
 private:
     //==============================================================================
     ReferenceCountedArray<Node> nodes;

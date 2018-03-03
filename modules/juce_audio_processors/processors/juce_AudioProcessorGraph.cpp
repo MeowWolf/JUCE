@@ -252,7 +252,10 @@ private:
 
         void perform (const Context& c) override
         {
-            processor.setPlayHead (c.audioPlayHead);
+            if (nullptr != c.audioPlayHead)
+            {
+                processor.setPlayHead(c.audioPlayHead);
+            }
 
             for (int i = 0; i < totalChans; ++i)
                 audioChannels[i] = c.audioBuffers[audioChannelsToUse.getUnchecked (i)];
@@ -896,7 +899,10 @@ AudioProcessorGraph::Node::Ptr AudioProcessorGraph::addNode (AudioProcessor* new
     if (nodeID > lastNodeID)
         lastNodeID = nodeID;
 
-    newProcessor->setPlayHead (getPlayHead());
+    if (shouldSetChildPlayheads.get() == 1)
+    {
+        newProcessor->setPlayHead(getPlayHead());
+    }
 
     Node::Ptr n (new Node (nodeID, newProcessor));
     nodes.add (n);
@@ -1261,7 +1267,7 @@ void AudioProcessorGraph::processBlock (AudioBuffer<float>& buffer, MidiBuffer& 
     const ScopedLock sl (getCallbackLock());
 
     if (renderSequenceFloat != nullptr)
-        renderSequenceFloat->perform (buffer, midiMessages, getPlayHead());
+        renderSequenceFloat->perform (buffer, midiMessages, shouldSetChildPlayheads.get() == 1 ? getPlayHead() : nullptr);
 }
 
 void AudioProcessorGraph::processBlock (AudioBuffer<double>& buffer, MidiBuffer& midiMessages)
@@ -1269,7 +1275,7 @@ void AudioProcessorGraph::processBlock (AudioBuffer<double>& buffer, MidiBuffer&
     const ScopedLock sl (getCallbackLock());
 
     if (renderSequenceDouble != nullptr)
-        renderSequenceDouble->perform (buffer, midiMessages, getPlayHead());
+        renderSequenceDouble->perform (buffer, midiMessages, shouldSetChildPlayheads.get() == 1 ? getPlayHead() : nullptr);
 }
 
 //==============================================================================
