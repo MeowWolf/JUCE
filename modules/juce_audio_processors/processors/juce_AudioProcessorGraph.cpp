@@ -899,7 +899,7 @@ AudioProcessorGraph::Node::Ptr AudioProcessorGraph::addNode (AudioProcessor* new
     if (nodeID > lastNodeID)
         lastNodeID = nodeID;
 
-    if (shouldSetChildPlayheads.get() == 1)
+    if (shouldSetChildPlayheads.get() != 0)
     {
         newProcessor->setPlayHead(getPlayHead());
     }
@@ -1267,7 +1267,7 @@ void AudioProcessorGraph::processBlock (AudioBuffer<float>& buffer, MidiBuffer& 
     const ScopedLock sl (getCallbackLock());
 
     if (renderSequenceFloat != nullptr)
-        renderSequenceFloat->perform (buffer, midiMessages, shouldSetChildPlayheads.get() == 1 ? getPlayHead() : nullptr);
+        renderSequenceFloat->perform (buffer, midiMessages, shouldSetChildPlayheads.get() != 0 ? getPlayHead() : nullptr);
 }
 
 void AudioProcessorGraph::processBlock (AudioBuffer<double>& buffer, MidiBuffer& midiMessages)
@@ -1275,7 +1275,7 @@ void AudioProcessorGraph::processBlock (AudioBuffer<double>& buffer, MidiBuffer&
     const ScopedLock sl (getCallbackLock());
 
     if (renderSequenceDouble != nullptr)
-        renderSequenceDouble->perform (buffer, midiMessages, shouldSetChildPlayheads.get() == 1 ? getPlayHead() : nullptr);
+        renderSequenceDouble->perform (buffer, midiMessages, shouldSetChildPlayheads.get() != 0 ? getPlayHead() : nullptr);
 }
 
 //==============================================================================
