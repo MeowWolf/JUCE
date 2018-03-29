@@ -366,6 +366,8 @@ public:
     void getStateInformation (juce::MemoryBlock&) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    Atomic<int> shouldSetChildPlayheads { 1 };
+
 private:
     //==============================================================================
     ReferenceCountedArray<Node> nodes;

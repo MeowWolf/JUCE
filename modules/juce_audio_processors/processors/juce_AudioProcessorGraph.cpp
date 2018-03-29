@@ -252,7 +252,10 @@ private:
 
         void perform (const Context& c) override
         {
-            processor.setPlayHead (c.audioPlayHead);
+            if (nullptr != c.audioPlayHead)
+            {
+                processor.setPlayHead(c.audioPlayHead);
+            }
 
             for (int i = 0; i < totalChans; ++i)
                 audioChannels[i] = c.audioBuffers[audioChannelsToUse.getUnchecked (i)];
@@ -896,7 +899,10 @@ AudioProcessorGraph::Node::Ptr AudioProcessorGraph::addNode (AudioProcessor* new
     if (nodeID > lastNodeID)
         lastNodeID = nodeID;
 
-    newProcessor->setPlayHead (getPlayHead());
+    if (shouldSetChildPlayheads.get() != 0)
+    {
+        newProcessor->setPlayHead(getPlayHead());
+    }
 
     Node::Ptr n (new Node (nodeID, newProcessor));
     nodes.add (n);
@@ -1270,7 +1276,12 @@ static void processBlockForBuffer (AudioBuffer<Type>& buffer, MidiBuffer& midiMe
         const ScopedLock sl (graph.getCallbackLock());
 
         if (renderSequence != nullptr)
-            renderSequence->perform (buffer, midiMessages, graph.getPlayHead());
+        {
+            AudioPlayHead* ph = graph.shouldSetChildPlayheads.get() != 0
+                                ? graph.getPlayHead()
+                                : nullptr;
+            renderSequence->perform(buffer, midiMessages, ph);
+        }
     }
     else
     {
@@ -1279,7 +1290,12 @@ static void processBlockForBuffer (AudioBuffer<Type>& buffer, MidiBuffer& midiMe
         if (isPrepared.get() == 1)
         {
             if (renderSequence != nullptr)
-                renderSequence->perform (buffer, midiMessages, graph.getPlayHead());
+            {
+                AudioPlayHead* ph = graph.shouldSetChildPlayheads.get() != 0
+                                    ? graph.getPlayHead()
+                                    : nullptr;
+                renderSequence->perform(buffer, midiMessages, ph);
+            }
         }
         else
         {
