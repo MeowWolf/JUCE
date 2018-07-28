@@ -25,7 +25,7 @@
 
  name:             OpenGLDemo2D
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Simple 2D OpenGL application.
 
@@ -143,7 +143,7 @@ public:
         startTimer (1);
     }
 
-    ScopedPointer<OpenGLGraphicsContextCustomShader> shader;
+    std::unique_ptr<OpenGLGraphicsContextCustomShader> shader;
 
     Label statusLabel, presetLabel  { {}, "Shader Preset:" };
     ComboBox presetBox;

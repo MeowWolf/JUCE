@@ -25,7 +25,7 @@
 
  name:             MidiDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Handles incoming and outcoming midi messages.
 
@@ -53,10 +53,10 @@ struct MidiDeviceListEntry : ReferenceCountedObject
     MidiDeviceListEntry (const String& deviceName) : name (deviceName) {}
 
     String name;
-    ScopedPointer<MidiInput> inDevice;
-    ScopedPointer<MidiOutput> outDevice;
+    std::unique_ptr<MidiInput> inDevice;
+    std::unique_ptr<MidiOutput> outDevice;
 
-    typedef ReferenceCountedObjectPtr<MidiDeviceListEntry> Ptr;
+    using Ptr = ReferenceCountedObjectPtr<MidiDeviceListEntry>;
 };
 
 //==============================================================================
@@ -101,7 +101,7 @@ public:
             pairButton.setEnabled (false);
 
         addAndMakeVisible (pairButton);
-        pairButton.onClick = [this]
+        pairButton.onClick = []
         {
             RuntimePermissions::request (RuntimePermissions::bluetoothMidi,
                                          [] (bool wasGranted)
@@ -285,7 +285,7 @@ private:
         }
 
         //==============================================================================
-        void paintListBoxItem (int rowNumber, Graphics &g,
+        void paintListBoxItem (int rowNumber, Graphics& g,
                                int width, int height, bool rowIsSelected) override
         {
             auto textColour = getLookAndFeel().findColour (ListBox::textColourId);
@@ -356,7 +356,7 @@ private:
     };
 
     //==============================================================================
-    void handleIncomingMidiMessage (MidiInput* /*source*/, const MidiMessage &message) override
+    void handleIncomingMidiMessage (MidiInput* /*source*/, const MidiMessage& message) override
     {
         // This is called on the MIDI thread
 
@@ -476,8 +476,8 @@ private:
     TextEditor midiMonitor  { "MIDI Monitor" };
     TextButton pairButton   { "MIDI Bluetooth devices..." };
 
-    ScopedPointer<MidiDeviceListBox> midiInputSelector;
-    ScopedPointer<MidiDeviceListBox> midiOutputSelector;
+    std::unique_ptr<MidiDeviceListBox> midiInputSelector;
+    std::unique_ptr<MidiDeviceListBox> midiOutputSelector;
 
     ReferenceCountedArray<MidiDeviceListEntry> midiInputs;
     ReferenceCountedArray<MidiDeviceListEntry> midiOutputs;

@@ -25,7 +25,7 @@
 
  name:             BlocksSynthDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Blocks synthesiser application.
 
@@ -160,7 +160,7 @@ struct SineSound : public SynthesiserSound
 */
 struct SineVoice : public OscillatorBase
 {
-    SineVoice() {};
+    SineVoice() {}
 
     bool canPlaySound (SynthesiserSound* sound) override { return dynamic_cast<SineSound*> (sound) != nullptr; }
 
@@ -191,7 +191,7 @@ struct SquareSound : public SynthesiserSound
 */
 struct SquareVoice : public OscillatorBase
 {
-    SquareVoice() {};
+    SquareVoice() {}
 
     bool canPlaySound (SynthesiserSound* sound) override { return dynamic_cast<SquareSound*> (sound) != nullptr; }
 
@@ -596,12 +596,12 @@ public:
 
        #if JUCE_IOS
         connectButton.setButtonText ("Connect");
-        connectButton.onClick = [this] { BluetoothMidiDevicePairingDialogue::open(); };
+        connectButton.onClick = [] { BluetoothMidiDevicePairingDialogue::open(); };
         addAndMakeVisible (connectButton);
        #endif
 
         setSize (600, 400);
-    };
+    }
 
     ~BlocksSynthDemo()
     {
@@ -751,7 +751,7 @@ private:
     void clearOldTouchTimes (const Time now)
     {
         for (auto i = touchMessageTimesInLastSecond.size(); --i >= 0;)
-            if (touchMessageTimesInLastSecond.getReference(i) < now - juce::RelativeTime::seconds (0.33))
+            if (touchMessageTimesInLastSecond.getReference(i) < now - RelativeTime::seconds (0.33))
                 touchMessageTimesInLastSecond.remove (i);
     }
 
@@ -835,7 +835,7 @@ private:
     PhysicalTopologySource topologySource;
     Block::Ptr activeBlock;
 
-    Array<juce::Time> touchMessageTimesInLastSecond;
+    Array<Time> touchMessageTimesInLastSecond;
 
     int waveshapeMode = 0;
 

@@ -25,7 +25,7 @@
 
  name:             BlocksDrawingDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Blocks application to draw shapes.
 
@@ -305,7 +305,7 @@ public:
 
        #if JUCE_IOS
         connectButton.setButtonText ("Connect");
-        connectButton.onClick = [this] { BluetoothMidiDevicePairingDialogue::open(); };
+        connectButton.onClick = [] { BluetoothMidiDevicePairingDialogue::open(); };
         connectButton.setAlwaysOnTop (true);
         addAndMakeVisible (connectButton);
        #endif
@@ -531,7 +531,7 @@ private:
                 for (uint32 y = 0; y < 15; ++ y)
                 {
                     canvasProgram->setLED (x, y, Colours::black);
-                    lightpadComponent.setLEDColour (x, y, Colours::black);
+                    lightpadComponent.setLEDColour ((int) x, (int) y, Colours::black);
                 }
             }
 
@@ -554,7 +554,7 @@ private:
                 if (index >= 0)
                 {
                     canvasProgram->setLED (x0, y0, Colours::black);
-                    lightpadComponent.setLEDColour (x0, y0, Colours::black);
+                    lightpadComponent.setLEDColour ((int) x0, (int) y0, Colours::black);
                     activeLeds.remove (index);
                 }
 
@@ -574,7 +574,7 @@ private:
                 activeLeds.add (led);
                 canvasProgram->setLED (led.x, led.y, led.colour.withBrightness (led.brightness));
 
-                lightpadComponent.setLEDColour (led.x, led.y, led.colour.withBrightness (led.brightness));
+                lightpadComponent.setLEDColour ((int) led.x, (int) led.y, led.colour.withBrightness (led.brightness));
 
                 return;
             }
@@ -594,7 +594,7 @@ private:
             if (canvasProgram != nullptr)
                 canvasProgram->setLED (currentLed.x, currentLed.y, currentLed.colour.withBrightness (currentLed.brightness));
 
-            lightpadComponent.setLEDColour (currentLed.x, currentLed.y, currentLed.colour.withBrightness (currentLed.brightness));
+            lightpadComponent.setLEDColour ((int) currentLed.x, (int) currentLed.y, currentLed.colour.withBrightness (currentLed.brightness));
 
             activeLeds.set (index, currentLed);
         }
@@ -609,7 +609,7 @@ private:
             for (auto led : activeLeds)
             {
                 canvasProgram->setLED (led.x, led.y, led.colour.withBrightness (led.brightness));
-                lightpadComponent.setLEDColour (led.x, led.y, led.colour.withBrightness (led.brightness));
+                lightpadComponent.setLEDColour ((int) led.x, (int) led.y, led.colour.withBrightness (led.brightness));
             }
         }
     }
@@ -648,6 +648,7 @@ private:
             return xPos == x && yPos == y;
         }
     };
+
     Array<ActiveLED> activeLeds;
 
     int getLEDAt (uint32 x, uint32 y) const
@@ -665,6 +666,7 @@ private:
         colourPalette = 0,
         canvas
     };
+
     DisplayMode currentMode = colourPalette;
 
     //==============================================================================

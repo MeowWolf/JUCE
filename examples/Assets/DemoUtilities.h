@@ -54,6 +54,7 @@ inline File getExamplesDirectory() noexcept
     MemoryOutputStream mo;
 
     auto success = Base64::convertFromBase64 (mo, JUCE_STRINGIFY (PIP_JUCE_EXAMPLES_DIRECTORY));
+    ignoreUnused (success);
     jassert (success);
 
     return mo.toString();
@@ -82,6 +83,12 @@ inline InputStream* createAssetInputStream (const char* resourcePath)
    #if JUCE_IOS
     auto assetsDir = File::getSpecialLocation (File::currentExecutableFile)
                           .getParentDirectory().getChildFile ("Assets");
+   #elif JUCE_MAC
+    auto assetsDir = File::getSpecialLocation (File::currentExecutableFile)
+                          .getParentDirectory().getParentDirectory().getChildFile ("Resources").getChildFile ("Assets");
+
+    if (! assetsDir.exists())
+        assetsDir = getExamplesDirectory().getChildFile ("Assets");
    #else
     auto assetsDir = getExamplesDirectory().getChildFile ("Assets");
    #endif
@@ -100,7 +107,7 @@ inline Image getImageFromAssets (const char* assetName)
 
     if (img.isNull())
     {
-        ScopedPointer<InputStream> juceIconStream (createAssetInputStream (assetName));
+        std::unique_ptr<InputStream> juceIconStream (createAssetInputStream (assetName));
 
         if (juceIconStream == nullptr)
             return {};
@@ -115,7 +122,7 @@ inline Image getImageFromAssets (const char* assetName)
 
 inline String loadEntireAssetIntoString (const char* assetName)
 {
-    ScopedPointer<InputStream> input (createAssetInputStream (assetName));
+    std::unique_ptr<InputStream> input (createAssetInputStream (assetName));
 
     if (input == nullptr)
         return {};

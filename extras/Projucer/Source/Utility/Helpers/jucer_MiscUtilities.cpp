@@ -26,15 +26,17 @@
 
 #include "../../Application/jucer_Headers.h"
 
-//==============================================================================
-const char* getLineEnding()  { return "\r\n"; }
+#ifdef BUILDING_JUCE_COMPILEENGINE
+ const char* getPreferredLinefeed() { return "\r\n"; }
+#endif
 
+//==============================================================================
 String joinLinesIntoSourceFile (StringArray& lines)
 {
     while (lines.size() > 10 && lines [lines.size() - 1].isEmpty())
         lines.remove (lines.size() - 1);
 
-    return lines.joinIntoString (getLineEnding()) + getLineEnding();
+    return lines.joinIntoString (getPreferredLinefeed()) + getPreferredLinefeed();
 }
 
 String trimCommentCharsFromStartOfLine (const String& line)
@@ -48,7 +50,7 @@ String createAlphaNumericUID()
     const char chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     Random r;
 
-    uid << chars [r.nextInt (52)]; // make sure the first character is always a letter
+    uid << chars[r.nextInt (52)]; // make sure the first character is always a letter
 
     for (int i = 5; --i >= 0;)
     {
@@ -66,7 +68,7 @@ String hexString8Digits (int value)
 
 String createGUID (const String& seed)
 {
-    const String hex (MD5 ((seed + "_guidsalt").toUTF8()).toHexString().toUpperCase());
+    auto hex = MD5 ((seed + "_guidsalt").toUTF8()).toHexString().toUpperCase();
 
     return "{" + hex.substring (0, 8)
          + "-" + hex.substring (8, 12)
@@ -292,7 +294,7 @@ bool fileNeedsCppSyntaxHighlighting (const File& file)
 }
 
 //==============================================================================
-bool isJUCEModule (const String& moduleID) noexcept
+StringArray getJUCEModules() noexcept
 {
     static StringArray juceModuleIds =
     {
@@ -319,40 +321,12 @@ bool isJUCEModule (const String& moduleID) noexcept
         "juce_video"
     };
 
-    return juceModuleIds.contains (moduleID);
+    return juceModuleIds;
 }
 
-bool isValidExporterName (const String& exporterName) noexcept
+bool isJUCEModule (const String& moduleID) noexcept
 {
-    static StringArray validExporters =
-    {
-        "XCODE_MAC",
-        "XCODE_IPHONE",
-        "VS2013",
-        "VS2015",
-        "VS2017",
-        "LINUX_MAKE",
-        "ANDROIDSTUDIO",
-        "CODEBLOCKS_WINDOWS",
-        "CODEBLOCKS_LINUX"
-    };
-
-    return validExporters.contains (exporterName);
-}
-
-String getTargetFolderForExporter (const String& exporterName) noexcept
-{
-    if (exporterName == "XCODE_MAC")             return "MacOSX";
-    if (exporterName == "XCODE_IPHONE")          return "iOS";
-    if (exporterName == "VS2017")                return "VisualStudio2017";
-    if (exporterName == "VS2015")                return "VisualStudio2015";
-    if (exporterName == "VS2013")                return "MacOVisualStudio2015SX";
-    if (exporterName == "LINUX_MAKE")            return "LinuxMakefile";
-    if (exporterName == "ANDROIDSTUDIO")         return "Android";
-    if (exporterName == "CODEBLOCKS_WINDOWS")    return "CodeBlocksWindows";
-    if (exporterName == "CODEBLOCKS_LINUX")      return "CodeBlocksLinux";
-
-    return {};
+    return getJUCEModules().contains (moduleID);
 }
 
 StringArray getModulesRequiredForConsole() noexcept
@@ -401,16 +375,6 @@ bool isPIPFile (const File& file) noexcept
     }
 
     return false;
-}
-
-File getJUCEExamplesDirectoryPathFromGlobal() noexcept
-{
-    auto globalPath = getAppSettings().getStoredPath (Ids::jucePath).toString();
-
-    if (globalPath.isNotEmpty())
-        return File (getAppSettings().getStoredPath (Ids::jucePath).toString()).getChildFile ("examples");
-
-    return {};
 }
 
 bool isValidJUCEExamplesDirectory (const File& directory) noexcept

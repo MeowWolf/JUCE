@@ -7,12 +7,14 @@
     <true/>
     <key>NSMicrophoneUsageDescription</key>
     <string>This is an audio app which requires audio input. If you do not have a USB audio interface connected it will use the microphone.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app requires camera usage to function properly.</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
     <key>CFBundleExecutable</key>
     <string>${EXECUTABLE_NAME}</string>
     <key>CFBundleIdentifier</key>
-    <string>com.roli.juce.demorunner</string>
+    <string>com.juce.demorunner</string>
     <key>CFBundleName</key>
     <string>DemoRunner</string>
     <key>CFBundleDisplayName</key>
@@ -22,9 +24,9 @@
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleShortVersionString</key>
-    <string>5.2.1</string>
+    <string>5.3.2</string>
     <key>CFBundleVersion</key>
-    <string>5.2.1</string>
+    <string>5.3.2</string>
     <key>NSHumanReadableCopyright</key>
     <string>Copyright (c) 2018 - ROLI Ltd.</string>
     <key>NSHighResolutionCapable</key>
@@ -39,6 +41,7 @@
     <true/>
     <key>UISupportedInterfaceOrientations</key>
     <array>
+      <string>UIInterfaceOrientationPortrait</string>
       <string>UIInterfaceOrientationLandscapeLeft</string>
       <string>UIInterfaceOrientationLandscapeRight</string>
     </array>

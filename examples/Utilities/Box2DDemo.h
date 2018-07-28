@@ -25,7 +25,7 @@
 
  name:             Box2DDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Showcases 2D graphics features.
 
@@ -83,7 +83,7 @@ struct Test
     virtual void Keyboard (unsigned char /*key*/)   {}
     virtual void KeyboardUp (unsigned char /*key*/) {}
 
-    ScopedPointer<b2World> m_world  { new b2World (b2Vec2 (0.0f, -10.0f)) };
+    std::unique_ptr<b2World> m_world  { new b2World (b2Vec2 (0.0f, -10.0f)) };
 };
 
 #include "../Assets/Box2DTests/AddPair.h"
@@ -149,7 +149,7 @@ struct Box2DRenderComponent  : public Component
         }
     }
 
-    ScopedPointer<Test> currentTest;
+    std::unique_ptr<Test> currentTest;
 };
 
 //==============================================================================

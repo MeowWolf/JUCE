@@ -74,7 +74,7 @@
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\..\..\modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;JUCER_VS2017_78A5024=1;JUCE_APP_VERSION=5.3.0;JUCE_APP_VERSION_HEX=0x50300;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_RTAS=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;JUCER_VS2017_78A5024=1;JUCE_APP_VERSION=5.3.2;JUCE_APP_VERSION_HEX=0x50302;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_RTAS=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader/>
@@ -115,7 +115,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\..\..\modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;JUCER_VS2017_78A5024=1;JUCE_APP_VERSION=5.3.0;JUCE_APP_VERSION_HEX=0x50300;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_RTAS=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;JUCER_VS2017_78A5024=1;JUCE_APP_VERSION=5.3.2;JUCE_APP_VERSION_HEX=0x50302;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_RTAS=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader/>
@@ -274,6 +274,9 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\modules\juce_core\containers\juce_PropertySet.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\modules\juce_core\containers\juce_SparseSet.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\modules\juce_core\containers\juce_Variant.cpp">
@@ -1263,6 +1266,9 @@
     <ClCompile Include="..\..\..\..\modules\juce_gui_basics\properties\juce_ChoicePropertyComponent.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\modules\juce_gui_basics\properties\juce_MultiChoicePropertyComponent.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\modules\juce_gui_basics\properties\juce_PropertyComponent.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1447,6 +1453,7 @@
     <ClInclude Include="..\..\Source\Application\Windows\jucer_EditorColourSchemeWindowComponent.h"/>
     <ClInclude Include="..\..\Source\Application\Windows\jucer_FloatingToolWindow.h"/>
     <ClInclude Include="..\..\Source\Application\Windows\jucer_GlobalPathsWindowComponent.h"/>
+    <ClInclude Include="..\..\Source\Application\Windows\jucer_PIPCreatorWindowComponent.h"/>
     <ClInclude Include="..\..\Source\Application\Windows\jucer_SVGPathDataWindowComponent.h"/>
     <ClInclude Include="..\..\Source\Application\Windows\jucer_TranslationToolWindowComponent.h"/>
     <ClInclude Include="..\..\Source\Application\Windows\jucer_UTF8WindowComponent.h"/>
@@ -1473,6 +1480,8 @@
     <ClInclude Include="..\..\Source\BinaryData\Templates\jucer_NewInlineComponentTemplate.h"/>
     <ClInclude Include="..\..\Source\BinaryData\Templates\jucer_OpenGLComponentSimpleTemplate.h"/>
     <ClInclude Include="..\..\Source\BinaryData\Templates\jucer_OpenGLComponentTemplate.h"/>
+    <ClInclude Include="..\..\Source\BinaryData\Templates\jucer_PIPAudioProcessorTemplate.h"/>
+    <ClInclude Include="..\..\Source\BinaryData\Templates\jucer_PIPTemplate.h"/>
     <ClInclude Include="..\..\Source\CodeEditor\jucer_DocumentEditorComponent.h"/>
     <ClInclude Include="..\..\Source\CodeEditor\jucer_ItemPreviewComponent.h"/>
     <ClInclude Include="..\..\Source\CodeEditor\jucer_LiveBuildCodeEditor.h"/>
@@ -1555,6 +1564,7 @@
     <ClInclude Include="..\..\Source\LiveBuildEngine\jucer_CompileEngineClient.h"/>
     <ClInclude Include="..\..\Source\LiveBuildEngine\jucer_CompileEngineDLL.h"/>
     <ClInclude Include="..\..\Source\LiveBuildEngine\jucer_CompileEngineServer.h"/>
+    <ClInclude Include="..\..\Source\LiveBuildEngine\jucer_CompileEngineSettings.h"/>
     <ClInclude Include="..\..\Source\LiveBuildEngine\jucer_CppHelpers.h"/>
     <ClInclude Include="..\..\Source\LiveBuildEngine\jucer_DiagnosticMessage.h"/>
     <ClInclude Include="..\..\Source\LiveBuildEngine\jucer_DownloadCompileEngineThread.h"/>
@@ -1969,6 +1979,7 @@
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_BooleanPropertyComponent.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_ButtonPropertyComponent.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_ChoicePropertyComponent.h"/>
+    <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_MultiChoicePropertyComponent.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_PropertyComponent.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_PropertyPanel.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_SliderPropertyComponent.h"/>

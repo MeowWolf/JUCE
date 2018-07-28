@@ -25,7 +25,7 @@
 
  name:             MultiOutSynthPlugin
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Multi-out synthesiser audio plugin.
 
@@ -157,7 +157,7 @@ private:
 
     void loadNewSample (InputStream* soundBuffer, const char* format)
     {
-        ScopedPointer<AudioFormatReader> formatReader (formatManager.findFormatForFileExtension (format)->createReaderFor (soundBuffer, true));
+        std::unique_ptr<AudioFormatReader> formatReader (formatManager.findFormatForFileExtension (format)->createReaderFor (soundBuffer, true));
 
         BigInteger midiNotes;
         midiNotes.setRange (0, 126, true);

@@ -129,7 +129,7 @@ struct NewProjectWizard
         projectFile = targetFolder.getChildFile (File::createLegalFileName (appTitle))
                                   .withFileExtension (Project::projectFileExtension);
 
-        ScopedPointer<Project> project (new Project (projectFile));
+        std::unique_ptr<Project> project (new Project (projectFile));
 
         if (failedFiles.size() == 0)
         {
@@ -187,7 +187,7 @@ struct NewProjectWizard
 
         for (int i = 0; i < mods.size(); ++i)
             if (const ModuleDescription* info = list.getModuleWithID (mods[i]))
-                project.getModules().addModule (info->moduleFolder, false, useGlobalPath);
+                project.getModules().addModule (info->moduleFolder, false, useGlobalPath, false);
     }
 
     void addExporters (Project& project, WizardComp& wizardComp)

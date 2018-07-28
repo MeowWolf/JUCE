@@ -25,7 +25,7 @@
 
  name:             WidgetsDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Showcases various widgets.
 
@@ -50,26 +50,8 @@
 
 //==============================================================================
 static void showBubbleMessage (Component& targetComponent, const String& textToShow,
-                               ScopedPointer<BubbleMessageComponent>& bmc)
-{
-    bmc.reset (new BubbleMessageComponent());
-
-    if (Desktop::canUseSemiTransparentWindows())
-    {
-        bmc->setAlwaysOnTop (true);
-        bmc->addToDesktop (0);
-    }
-    else
-    {
-        targetComponent.getTopLevelComponent()->addChildComponent (bmc.get());
-    }
-
-    AttributedString text (textToShow);
-    text.setJustification (Justification::centred);
-    text.setColour (targetComponent.findColour (TextButton::textColourOffId));
-
-    bmc->showAt (&targetComponent, text, 2000, true, false);
-}
+                               std::unique_ptr<BubbleMessageComponent>& bmc,
+                               bool isRunningComponentTransformDemo);
 
 //==============================================================================
 /** To demonstrate how sliders can have custom snapping applied to their values,
@@ -272,7 +254,7 @@ private:
 //==============================================================================
 struct ButtonsPage   : public Component
 {
-    ButtonsPage()
+    ButtonsPage (bool isRunningComponentTransformDemo)
     {
         {
             auto* group = addToList (new GroupComponent ("group", "Radio buttons"));
@@ -374,14 +356,15 @@ struct ButtonsPage   : public Component
         down.setImage (getImageFromAssets ("juce_icon.png"));
         down.setOverlayColour (Colours::black.withAlpha (0.3f));
 
-        auto popupMessageCallback = [this]
+        auto popupMessageCallback = [this, isRunningComponentTransformDemo]
         {
             if (auto* focused = Component::getCurrentlyFocusedComponent())
                 showBubbleMessage (*focused,
                                    "This is a demo of the BubbleMessageComponent, which lets you pop up a message pointing "
                                    "at a component or somewhere on the screen.\n\n"
                                    "The message bubbles will disappear after a timeout period, or when the mouse is clicked.",
-                                   this->bubbleMessage);
+                                   this->bubbleMessage,
+                                   isRunningComponentTransformDemo);
         };
 
         {
@@ -450,7 +433,7 @@ struct ButtonsPage   : public Component
 
 private:
     OwnedArray<Component> components;
-    ScopedPointer<BubbleMessageComponent> bubbleMessage;
+    std::unique_ptr<BubbleMessageComponent> bubbleMessage;
 
     // This little function avoids a bit of code-duplication by adding a component to
     // our list as well as calling addAndMakeVisible on it..
@@ -675,7 +658,7 @@ private:
 
                 for (int i = 0; i < icons.getNumEntries(); ++i)
                 {
-                    ScopedPointer<InputStream> svgFileStream (icons.createStreamForEntry (i));
+                    std::unique_ptr<InputStream> svgFileStream (icons.createStreamForEntry (i));
 
                     if (svgFileStream.get() != nullptr)
                     {
@@ -920,7 +903,7 @@ private:
     TableListBox table;     // the table component itself
     Font font  { 14.0f };
 
-    ScopedPointer<XmlElement> demoData;  // This is the XML document loaded from the embedded file "demo table data.xml"
+    std::unique_ptr<XmlElement> demoData;  // This is the XML document loaded from the embedded file "demo table data.xml"
     XmlElement* columnList = nullptr;     // A pointer to the sub-node of demoData that contains the list of columns
     XmlElement* dataList   = nullptr;     // A pointer to the sub-node of demoData that contains the list of data rows
     int numRows;                          // The number of rows of data we've got
@@ -1277,19 +1260,20 @@ private:
 //==============================================================================
 struct DemoTabbedComponent  : public TabbedComponent
 {
-    DemoTabbedComponent()
+    DemoTabbedComponent (bool isRunningComponenTransformsDemo)
         : TabbedComponent (TabbedButtonBar::TabsAtTop)
     {
         auto colour = findColour (ResizableWindow::backgroundColourId);
 
-        addTab ("Buttons",     colour, new ButtonsPage(),        true);
-        addTab ("Sliders",     colour, new SlidersPage(),        true);
-        addTab ("Toolbars",    colour, new ToolbarDemoComp(),    true);
-        addTab ("Misc",        colour, new MiscPage(),           true);
-        addTab ("Tables",      colour, new TableDemoComponent(), true);
-        addTab ("Drag & Drop", colour, new DragAndDropDemo(),    true);
+        addTab ("Buttons",     colour, new ButtonsPage (isRunningComponenTransformsDemo), true);
+        addTab ("Sliders",     colour, new SlidersPage(),                                 true);
+        addTab ("Toolbars",    colour, new ToolbarDemoComp(),                             true);
+        addTab ("Misc",        colour, new MiscPage(),                                    true);
+        addTab ("Tables",      colour, new TableDemoComponent(),                          true);
+        addTab ("Drag & Drop", colour, new DragAndDropDemo(),                             true);
 
-        getTabbedButtonBar().getTabButton (5)->setExtraComponent (new CustomTabButton(), TabBarButton::afterText);
+        getTabbedButtonBar().getTabButton (5)->setExtraComponent (new CustomTabButton (isRunningComponenTransformsDemo),
+                                                                  TabBarButton::afterText);
     }
 
     // This is a small star button that is put inside one of the tabs. You can
@@ -1297,7 +1281,8 @@ struct DemoTabbedComponent  : public TabbedComponent
     class CustomTabButton  : public Component
     {
     public:
-        CustomTabButton()
+        CustomTabButton (bool isRunningComponenTransformsDemo)
+            : runningComponenTransformsDemo (isRunningComponenTransformsDemo)
         {
             setSize (20, 20);
         }
@@ -1318,10 +1303,12 @@ struct DemoTabbedComponent  : public TabbedComponent
                                "\n"
                                "You can use these to implement things like close-buttons "
                                "or status displays for your tabs.",
-                               bubbleMessage);
+                               bubbleMessage,
+                               runningComponenTransformsDemo);
         }
     private:
-        ScopedPointer<BubbleMessageComponent> bubbleMessage;
+        bool runningComponenTransformsDemo;
+        std::unique_ptr<BubbleMessageComponent> bubbleMessage;
     };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DemoTabbedComponent)
@@ -1330,7 +1317,8 @@ struct DemoTabbedComponent  : public TabbedComponent
 //==============================================================================
 struct WidgetsDemo   : public Component
 {
-    WidgetsDemo()
+    WidgetsDemo (bool isRunningComponenTransformsDemo = false)
+        : tabs (isRunningComponenTransformsDemo)
     {
         setOpaque (true);
         addAndMakeVisible (tabs);
@@ -1352,3 +1340,31 @@ struct WidgetsDemo   : public Component
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WidgetsDemo)
 };
+
+//==============================================================================
+void showBubbleMessage (Component& targetComponent, const String& textToShow,
+                        std::unique_ptr<BubbleMessageComponent>& bmc,
+                        bool isRunningComponentTransformDemo)
+{
+    bmc.reset (new BubbleMessageComponent());
+
+    if (isRunningComponentTransformDemo)
+    {
+        targetComponent.findParentComponentOfClass<WidgetsDemo>()->addChildComponent (bmc.get());
+    }
+    else if (Desktop::canUseSemiTransparentWindows())
+    {
+        bmc->setAlwaysOnTop (true);
+        bmc->addToDesktop (0);
+    }
+    else
+    {
+        targetComponent.getTopLevelComponent()->addChildComponent (bmc.get());
+    }
+
+    AttributedString text (textToShow);
+    text.setJustification (Justification::centred);
+    text.setColour (targetComponent.findColour (TextButton::textColourOffId));
+
+    bmc->showAt (&targetComponent, text, 2000, true, false);
+}

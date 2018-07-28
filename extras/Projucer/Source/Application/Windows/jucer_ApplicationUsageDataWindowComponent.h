@@ -64,7 +64,8 @@ public:
 
         if (showCheckbox)
         {
-            addAndMakeVisible (shareApplicationUsageDataToggle = new ToggleButton());
+            shareApplicationUsageDataToggle.reset (new ToggleButton());
+            addAndMakeVisible (shareApplicationUsageDataToggle.get());
 
             auto* controller = ProjucerApplication::getApp().licenseController.get();
 
@@ -151,7 +152,7 @@ private:
     Label headerLabel, bodyLabel;
     HyperlinkButton juceEULALink, privacyPolicyLink;
     Label shareApplicationUsageDataLabel { {}, "Help JUCE to improve its software and services by sharing my application usage data" };
-    ScopedPointer<ToggleButton> shareApplicationUsageDataToggle;
+    std::unique_ptr<ToggleButton> shareApplicationUsageDataToggle;
     TextButton okButton { "OK" }, upgradeLicenseButton { "Upgrade License" };
 
     void lookAndFeelChanged() override

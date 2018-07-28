@@ -32,7 +32,10 @@
 #include "../CodeEditor/jucer_SourceCodeEditor.h"
 #include "../Utility/UI/jucer_ProjucerLookAndFeel.h"
 #include "../Licenses/jucer_LicenseController.h"
-#include "jucer_ProjucerAnalytics.h"
+
+#if JUCE_MODULE_AVAILABLE_juce_analytics
+ #include "jucer_ProjucerAnalytics.h"
+#endif
 
 struct ChildProcessCache;
 
@@ -90,7 +93,7 @@ public:
     //==============================================================================
     void createNewProject();
     void createNewProjectFromClipboard();
-    void updateNewlyOpenedProject (Project&);
+    void createNewPIP();
     void askUserToOpenFile();
     bool openFile (const File&);
     bool closeAllDocuments (bool askUserToSave);
@@ -110,6 +113,8 @@ public:
 
     void showPathsWindow (bool highlightJUCEPath = false);
     void showEditorColourSchemeWindow();
+
+    void showPIPCreatorWindow();
 
     void launchForumBrowser();
     void launchModulesBrowser();
@@ -136,29 +141,29 @@ public:
     //==============================================================================
     ProjucerLookAndFeel lookAndFeel;
 
-    ScopedPointer<StoredSettings> settings;
-    ScopedPointer<Icons> icons;
+    std::unique_ptr<StoredSettings> settings;
+    std::unique_ptr<Icons> icons;
 
     struct MainMenuModel;
-    ScopedPointer<MainMenuModel> menuModel;
+    std::unique_ptr<MainMenuModel> menuModel;
 
     MainWindowList mainWindowList;
     OpenDocumentManager openDocumentManager;
-    ScopedPointer<ApplicationCommandManager> commandManager;
+    std::unique_ptr<ApplicationCommandManager> commandManager;
 
-    ScopedPointer<Component> utf8Window, svgPathWindow, aboutWindow, applicationUsageDataWindow,
-                             pathsWindow, editorColourSchemeWindow;
+    std::unique_ptr<Component> utf8Window, svgPathWindow, aboutWindow, applicationUsageDataWindow,
+                             pathsWindow, editorColourSchemeWindow, pipCreatorWindow;
 
-    ScopedPointer<FileLogger> logger;
+    std::unique_ptr<FileLogger> logger;
 
     bool isRunningCommandLine;
-    ScopedPointer<ChildProcessCache> childProcessCache;
-    ScopedPointer<LicenseController> licenseController;
+    std::unique_ptr<ChildProcessCache> childProcessCache;
+    std::unique_ptr<LicenseController> licenseController;
 
 private:
     void* server = nullptr;
 
-    ScopedPointer<LatestVersionChecker> versionChecker;
+    std::unique_ptr<LatestVersionChecker> versionChecker;
     TooltipWindow tooltipWindow;
 
     void loginOrLogout();
@@ -174,18 +179,19 @@ private:
     void deleteTemporaryFiles() const noexcept;
 
     void createExamplesPopupMenu (PopupMenu&) noexcept;
-    Array<File> getSortedExampleDirectories() const noexcept;
+    Array<File> getSortedExampleDirectories() noexcept;
     Array<File> getSortedExampleFilesInDirectory (const File&) const noexcept;
 
     bool findWindowAndOpenPIP (const File&);
 
+    File getJUCEExamplesDirectoryPathFromGlobal() noexcept;
     void findAndLaunchExample (int);
-    File findDemoRunnerExecutable() const noexcept;
-    File findDemoRunnerProject() const noexcept;
+    File findDemoRunnerExecutable() noexcept;
+    File findDemoRunnerProject() noexcept;
     void launchDemoRunner();
 
     int numExamples = 0;
-    ScopedPointer<AlertWindow> demoRunnerAlert;
+    std::unique_ptr<AlertWindow> demoRunnerAlert;
 
    #if JUCE_LINUX
     ChildProcess makeProcess;
@@ -195,7 +201,7 @@ private:
     void setupAnalytics();
 
     void showSetJUCEPathAlert();
-    ScopedPointer<AlertWindow> pathAlert;
+    std::unique_ptr<AlertWindow> pathAlert;
 
     //==============================================================================
     void setColourScheme (int index, bool saveSetting);

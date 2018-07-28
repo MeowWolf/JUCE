@@ -31,7 +31,7 @@
 class MSVCProjectExporterBase   : public ProjectExporter
 {
 public:
-    MSVCProjectExporterBase (Project& p, const ValueTree& t, const char* const folderName)
+    MSVCProjectExporterBase (Project& p, const ValueTree& t, String folderName)
         : ProjectExporter (p, t),
           IPPLibraryValue       (settings, Ids::IPPLibrary,                   getUndoManager()),
           platformToolsetValue  (settings, Ids::toolset,                      getUndoManager()),
@@ -135,7 +135,8 @@ public:
     }
 
     //==============================================================================
-    class MSVCBuildConfiguration  : public BuildConfiguration
+    class MSVCBuildConfiguration  : public BuildConfiguration,
+                                    private Value::Listener
     {
     public:
         MSVCBuildConfiguration (Project& p, const ValueTree& settings, const ProjectExporter& e)
@@ -153,14 +154,20 @@ public:
               architectureTypeValue         (config, Ids::winArchitecture,            getUndoManager(), get64BitArchName()),
               fastMathValue                 (config, Ids::fastMath,                   getUndoManager()),
               debugInformationFormatValue   (config, Ids::debugInformationFormat,     getUndoManager(), isDebug() ? "ProgramDatabase" : "None"),
-              pluginBinaryCopyStepValue     (config, Ids::enablePluginBinaryCopyStep, getUndoManager(), false)
+              pluginBinaryCopyStepValue     (config, Ids::enablePluginBinaryCopyStep, getUndoManager(), false),
+              vstBinaryLocation             (config, Ids::vstBinaryLocation,          getUndoManager()),
+              vst3BinaryLocation            (config, Ids::vst3BinaryLocation,         getUndoManager()),
+              rtasBinaryLocation            (config, Ids::rtasBinaryLocation,         getUndoManager()),
+              aaxBinaryLocation             (config, Ids::aaxBinaryLocation,          getUndoManager())
         {
             if (! isDebug())
                 updateOldLTOSetting();
 
-            initialisePluginDefaultValues();
-
+            setPluginBinaryCopyLocationDefaults();
             optimisationLevelValue.setDefault (isDebug() ? optimisationOff : optimiseFull);
+
+            architectureValueToListenTo = architectureTypeValue.getPropertyAsValue();
+            architectureValueToListenTo.addListener (this);
         }
 
         //==============================================================================
@@ -303,6 +310,8 @@ public:
 
         ValueWithDefault vstBinaryLocation, vst3BinaryLocation, rtasBinaryLocation, aaxBinaryLocation;
 
+        Value architectureValueToListenTo;
+
         //==============================================================================
         void updateOldLTOSetting()
         {
@@ -341,17 +350,21 @@ public:
 
         }
 
-        void initialisePluginDefaultValues()
+        void setPluginBinaryCopyLocationDefaults()
         {
-            vstBinaryLocation.referTo  (config, Ids::vstBinaryLocation,  getUndoManager(), ((is64Bit() ? "%ProgramW6432%"
-                                                                                                       : "%programfiles(x86)%") + String ("\\Steinberg\\Vstplugins")));
+            vstBinaryLocation.setDefault  ((is64Bit() ? "%ProgramW6432%" : "%programfiles(x86)%") + String ("\\Steinberg\\Vstplugins"));
 
             auto prefix = is64Bit() ? "%CommonProgramW6432%"
                                     : "%CommonProgramFiles(x86)%";
 
-            vst3BinaryLocation.referTo (config, Ids::vst3BinaryLocation, getUndoManager(), prefix + String ("\\VST3"));
-            rtasBinaryLocation.referTo (config, Ids::rtasBinaryLocation, getUndoManager(), prefix + String ("\\Digidesign\\DAE\\Plug-Ins"));
-            aaxBinaryLocation.referTo  (config, Ids::aaxBinaryLocation,  getUndoManager(), prefix + String ("\\Avid\\Audio\\Plug-Ins"));
+            vst3BinaryLocation.setDefault (prefix + String ("\\VST3"));
+            rtasBinaryLocation.setDefault (prefix + String ("\\Digidesign\\DAE\\Plug-Ins"));
+            aaxBinaryLocation.setDefault  (prefix + String ("\\Avid\\Audio\\Plug-Ins"));
+        }
+
+        void valueChanged (Value&) override
+        {
+            setPluginBinaryCopyLocationDefaults();
         }
     };
 
@@ -493,12 +506,15 @@ public:
                         manifest->addTextElement (config.shouldGenerateManifest() ? "true" : "false");
                     }
 
-                    auto librarySearchPaths = getLibrarySearchPaths (config);
-                    if (librarySearchPaths.size() > 0)
+                    if (type != SharedCodeTarget)
                     {
-                        auto* libPath = props->createNewChildElement ("LibraryPath");
-                        setConditionAttribute (*libPath, config);
-                        libPath->addTextElement ("$(LibraryPath);" + librarySearchPaths.joinIntoString (";"));
+                        auto librarySearchPaths = getLibrarySearchPaths (config);
+                        if (librarySearchPaths.size() > 0)
+                        {
+                            auto* libPath = props->createNewChildElement ("LibraryPath");
+                            setConditionAttribute (*libPath, config);
+                            libPath->addTextElement ("$(LibraryPath);" + librarySearchPaths.joinIntoString (";"));
+                        }
                     }
                 }
             }
@@ -581,11 +597,14 @@ public:
                 }
 
                 auto externalLibraries = getExternalLibraries (config, getOwner().getExternalLibrariesString());
-                auto additionalDependencies = externalLibraries.isNotEmpty() ? getOwner().replacePreprocessorTokens (config, externalLibraries).trim() + ";%(AdditionalDependencies)"
-                                                                                   : String();
+                auto additionalDependencies = type != SharedCodeTarget && externalLibraries.isNotEmpty()
+                                                        ? getOwner().replacePreprocessorTokens (config, externalLibraries).trim() + ";%(AdditionalDependencies)"
+                                                        : String();
+
                 auto librarySearchPaths = config.getLibrarySearchPaths();
-                auto additionalLibraryDirs = librarySearchPaths.size() > 0 ? getOwner().replacePreprocessorTokens (config, librarySearchPaths.joinIntoString (";")) + ";%(AdditionalLibraryDirectories)"
-                                                                           : String();
+                auto additionalLibraryDirs = type != SharedCodeTarget && librarySearchPaths.size() > 0
+                                                       ? getOwner().replacePreprocessorTokens (config, librarySearchPaths.joinIntoString (";")) + ";%(AdditionalLibraryDirectories)"
+                                                       : String();
 
                 {
                     auto* link = group->createNewChildElement ("Link");
@@ -638,6 +657,7 @@ public:
                     bsc->createNewChildElement ("OutputFile")->addTextElement (getOwner().getIntDirFile (config, config.getOutputFilename (".bsc", true)));
                 }
 
+                if (type != SharedCodeTarget)
                 {
                     auto* lib = group->createNewChildElement ("Lib");
 
@@ -677,7 +697,7 @@ public:
                          ->addTextElement (postBuild);
             }
 
-            ScopedPointer<XmlElement> otherFilesGroup (new XmlElement ("ItemGroup"));
+            std::unique_ptr<XmlElement> otherFilesGroup (new XmlElement ("ItemGroup"));
 
             {
                 auto* cppFiles    = projectXml.createNewChildElement ("ItemGroup");
@@ -701,7 +721,7 @@ public:
             if (otherFilesGroup->getFirstChildElement() != nullptr)
                 projectXml.addChildElement (otherFilesGroup.release());
 
-            if (getOwner().hasResourceFile())
+            if (type != SharedCodeTarget && getOwner().hasResourceFile())
             {
                 auto* rcGroup = projectXml.createNewChildElement ("ItemGroup");
                 auto* e = rcGroup->createNewChildElement ("ResourceCompile");
@@ -872,7 +892,7 @@ public:
             auto* groupsXml  = filterXml.createNewChildElement ("ItemGroup");
             auto* cpps       = filterXml.createNewChildElement ("ItemGroup");
             auto* headers    = filterXml.createNewChildElement ("ItemGroup");
-            ScopedPointer<XmlElement> otherFilesGroup (new XmlElement ("ItemGroup"));
+            std::unique_ptr<XmlElement> otherFilesGroup (new XmlElement ("ItemGroup"));
 
             for (int i = 0; i < getOwner().getAllGroups().size(); ++i)
             {
@@ -892,7 +912,7 @@ public:
             if (otherFilesGroup->getFirstChildElement() != nullptr)
                 filterXml.addChildElement (otherFilesGroup.release());
 
-            if (getOwner().hasResourceFile())
+            if (type != SharedCodeTarget && getOwner().hasResourceFile())
             {
                 auto* rcGroup = filterXml.createNewChildElement ("ItemGroup");
                 auto* e = rcGroup->createNewChildElement ("ResourceCompile");
@@ -1058,16 +1078,14 @@ public:
                 RelativePath bundleScript  = aaxSDK.getChildFile ("Utilities").getChildFile ("CreatePackage.bat");
                 RelativePath iconFilePath  = getAAXIconFile();
 
-                auto is64Bit = (config.config [Ids::winArchitecture] == "x64");
-
                 auto outputFilename = config.getOutputFilename (".aaxplugin", true);
                 auto bundleDir      = getOwner().getOutDirFile (config, outputFilename);
                 auto bundleContents = bundleDir + "\\Contents";
-                auto macOSDir       = bundleContents + String ("\\") + (is64Bit ? "x64" : "Win32");
-                auto executable     = macOSDir + String ("\\") + outputFilename;
+                auto archDir        = bundleContents + String ("\\") + (config.is64Bit() ? "x64" : "Win32");
+                auto executable     = archDir + String ("\\") + outputFilename;
 
                 auto pkgScript = String ("copy /Y ") + getOutputFilePath (config).quoted() + String (" ") + executable.quoted() + String ("\r\ncall ")
-                                     + createRebasedPath (bundleScript) + String (" ") + macOSDir.quoted() + String (" ") + createRebasedPath (iconFilePath);
+                                     + createRebasedPath (bundleScript) + String (" ") + archDir.quoted() + String (" ") + createRebasedPath (iconFilePath);
 
                 if (config.isPluginBinaryCopyStepEnabled())
                     return pkgScript + "\r\n" + "xcopy " + bundleDir.quoted() + " "
@@ -1093,12 +1111,11 @@ public:
             {
                 String script;
 
-                bool is64Bit = (config.config [Ids::winArchitecture] == "x64");
                 auto bundleDir      = getOwner().getOutDirFile (config, config.getOutputFilename (".aaxplugin", false));
                 auto bundleContents = bundleDir + "\\Contents";
-                auto macOSDir       = bundleContents + String ("\\") + (is64Bit ? "x64" : "Win32");
+                auto archDir        = bundleContents + String ("\\") + (config.is64Bit() ? "x64" : "Win32");
 
-                for (auto& folder : StringArray { bundleDir, bundleContents, macOSDir })
+                for (auto& folder : StringArray { bundleDir, bundleContents, archDir })
                     script += String ("if not exist \"") + folder + String ("\" mkdir \"") + folder + String ("\"\r\n");
 
                 return script;
@@ -1810,7 +1827,7 @@ class MSVCProjectExporterVC2013  : public MSVCProjectExporterBase
 {
 public:
     MSVCProjectExporterVC2013 (Project& p, const ValueTree& t)
-        : MSVCProjectExporterBase (p, t, "VisualStudio2013")
+        : MSVCProjectExporterBase (p, t, getTargetFolderForExporter (getValueTreeTypeName()))
     {
         name = getName();
 
@@ -1856,7 +1873,7 @@ class MSVCProjectExporterVC2015  : public MSVCProjectExporterBase
 {
 public:
     MSVCProjectExporterVC2015 (Project& p, const ValueTree& t)
-        : MSVCProjectExporterBase (p, t, "VisualStudio2015")
+        : MSVCProjectExporterBase (p, t, getTargetFolderForExporter (getValueTreeTypeName()))
     {
         name = getName();
 
@@ -1901,7 +1918,7 @@ class MSVCProjectExporterVC2017  : public MSVCProjectExporterBase
 {
 public:
     MSVCProjectExporterVC2017 (Project& p, const ValueTree& t)
-        : MSVCProjectExporterBase (p, t, "VisualStudio2017")
+        : MSVCProjectExporterBase (p, t, getTargetFolderForExporter (getValueTreeTypeName()))
     {
         name = getName();
 

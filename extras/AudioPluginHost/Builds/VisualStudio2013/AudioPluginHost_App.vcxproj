@@ -148,12 +148,12 @@
     <Lib/>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\FilterGraph.cpp"/>
-    <ClCompile Include="..\..\Source\FilterIOConfiguration.cpp"/>
-    <ClCompile Include="..\..\Source\GraphEditorPanel.cpp"/>
+    <ClCompile Include="..\..\Source\Filters\FilterGraph.cpp"/>
+    <ClCompile Include="..\..\Source\Filters\FilterIOConfiguration.cpp"/>
+    <ClCompile Include="..\..\Source\Filters\InternalFilters.cpp"/>
+    <ClCompile Include="..\..\Source\UI\GraphEditorPanel.cpp"/>
+    <ClCompile Include="..\..\Source\UI\MainHostWindow.cpp"/>
     <ClCompile Include="..\..\Source\HostStartup.cpp"/>
-    <ClCompile Include="..\..\Source\InternalFilters.cpp"/>
-    <ClCompile Include="..\..\Source\MainHostWindow.cpp"/>
     <ClCompile Include="..\..\..\..\modules\juce_audio_basics\buffers\juce_AudioChannelSet.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -278,6 +278,9 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\modules\juce_audio_devices\native\juce_linux_ALSA.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\modules\juce_audio_devices\native\juce_linux_Bela.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\modules\juce_audio_devices\native\juce_linux_JackAudio.cpp">
@@ -490,6 +493,9 @@
     <ClCompile Include="..\..\..\..\modules\juce_audio_processors\format_types\juce_LADSPAPluginFormat.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\modules\juce_audio_processors\format_types\juce_LegacyAudioParameter.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\modules\juce_audio_processors\format_types\juce_VST3PluginFormat.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -593,6 +599,9 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\modules\juce_core\containers\juce_PropertySet.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\modules\juce_core\containers\juce_SparseSet.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\modules\juce_core\containers\juce_Variant.cpp">
@@ -1582,6 +1591,9 @@
     <ClCompile Include="..\..\..\..\modules\juce_gui_basics\properties\juce_ChoicePropertyComponent.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\modules\juce_gui_basics\properties\juce_MultiChoicePropertyComponent.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\modules\juce_gui_basics\properties\juce_PropertyComponent.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1789,6 +1801,7 @@
     <ClCompile Include="..\..\..\..\modules\juce_video\juce_video.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\BinaryData.cpp"/>
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_audio_basics.cpp"/>
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_audio_devices.cpp"/>
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_audio_formats.cpp"/>
@@ -1805,12 +1818,12 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_video.cpp"/>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\FilterGraph.h"/>
-    <ClInclude Include="..\..\Source\FilterIOConfiguration.h"/>
-    <ClInclude Include="..\..\Source\GraphEditorPanel.h"/>
-    <ClInclude Include="..\..\Source\InternalFilters.h"/>
-    <ClInclude Include="..\..\Source\MainHostWindow.h"/>
-    <ClInclude Include="..\..\Source\PluginWindow.h"/>
+    <ClInclude Include="..\..\Source\Filters\FilterGraph.h"/>
+    <ClInclude Include="..\..\Source\Filters\FilterIOConfiguration.h"/>
+    <ClInclude Include="..\..\Source\Filters\InternalFilters.h"/>
+    <ClInclude Include="..\..\Source\UI\GraphEditorPanel.h"/>
+    <ClInclude Include="..\..\Source\UI\MainHostWindow.h"/>
+    <ClInclude Include="..\..\Source\UI\PluginWindow.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_audio_basics\buffers\juce_AudioChannelSet.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h"/>
@@ -2342,6 +2355,7 @@
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_BooleanPropertyComponent.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_ButtonPropertyComponent.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_ChoicePropertyComponent.h"/>
+    <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_MultiChoicePropertyComponent.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_PropertyComponent.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_PropertyPanel.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_gui_basics\properties\juce_SliderPropertyComponent.h"/>
@@ -2422,6 +2436,7 @@
     <ClInclude Include="..\..\..\..\modules\juce_opengl\juce_opengl.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_video\capture\juce_CameraDevice.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_video\native\juce_android_CameraDevice.h"/>
+    <ClInclude Include="..\..\..\..\modules\juce_video\native\juce_ios_CameraDevice.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_video\native\juce_mac_CameraDevice.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_video\native\juce_mac_Video.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_video\native\juce_win32_CameraDevice.h"/>
@@ -2429,13 +2444,16 @@
     <ClInclude Include="..\..\..\..\modules\juce_video\playback\juce_VideoComponent.h"/>
     <ClInclude Include="..\..\..\..\modules\juce_video\juce_video.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\AppConfig.h"/>
+    <ClInclude Include="..\..\JuceLibraryCode\BinaryData.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Source\JUCEAppIcon.png"/>
     <None Include="..\..\..\..\modules\juce_audio_formats\codecs\flac\Flac Licence.txt"/>
     <None Include="..\..\..\..\modules\juce_audio_formats\codecs\oggvorbis\Ogg Vorbis Licence.txt"/>
     <None Include="..\..\..\..\modules\juce_graphics\image_formats\jpglib\changes to libjpeg for JUCE.txt"/>
     <None Include="..\..\..\..\modules\juce_graphics\image_formats\pnglib\libpng_readme.txt"/>
+    <None Include=".\icon.ico"/>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc"/>

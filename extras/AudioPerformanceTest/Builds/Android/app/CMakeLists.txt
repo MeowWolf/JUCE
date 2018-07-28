@@ -122,6 +122,7 @@ add_library( ${BINARY_NAME}
     "../../../../../modules/juce_audio_devices/native/juce_ios_Audio.cpp"
     "../../../../../modules/juce_audio_devices/native/juce_ios_Audio.h"
     "../../../../../modules/juce_audio_devices/native/juce_linux_ALSA.cpp"
+    "../../../../../modules/juce_audio_devices/native/juce_linux_Bela.cpp"
     "../../../../../modules/juce_audio_devices/native/juce_linux_JackAudio.cpp"
     "../../../../../modules/juce_audio_devices/native/juce_linux_Midi.cpp"
     "../../../../../modules/juce_audio_devices/native/juce_mac_CoreAudio.cpp"
@@ -304,6 +305,7 @@ add_library( ${BINARY_NAME}
     "../../../../../modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm"
     "../../../../../modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp"
     "../../../../../modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.h"
+    "../../../../../modules/juce_audio_processors/format_types/juce_LegacyAudioParameter.cpp"
     "../../../../../modules/juce_audio_processors/format_types/juce_VST3Common.h"
     "../../../../../modules/juce_audio_processors/format_types/juce_VST3Headers.h"
     "../../../../../modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp"
@@ -397,6 +399,7 @@ add_library( ${BINARY_NAME}
     "../../../../../modules/juce_core/containers/juce_ReferenceCountedArray.h"
     "../../../../../modules/juce_core/containers/juce_ScopedValueSetter.h"
     "../../../../../modules/juce_core/containers/juce_SortedSet.h"
+    "../../../../../modules/juce_core/containers/juce_SparseSet.cpp"
     "../../../../../modules/juce_core/containers/juce_SparseSet.h"
     "../../../../../modules/juce_core/containers/juce_Variant.cpp"
     "../../../../../modules/juce_core/containers/juce_Variant.h"
@@ -1061,6 +1064,8 @@ add_library( ${BINARY_NAME}
     "../../../../../modules/juce_gui_basics/properties/juce_ButtonPropertyComponent.h"
     "../../../../../modules/juce_gui_basics/properties/juce_ChoicePropertyComponent.cpp"
     "../../../../../modules/juce_gui_basics/properties/juce_ChoicePropertyComponent.h"
+    "../../../../../modules/juce_gui_basics/properties/juce_MultiChoicePropertyComponent.cpp"
+    "../../../../../modules/juce_gui_basics/properties/juce_MultiChoicePropertyComponent.h"
     "../../../../../modules/juce_gui_basics/properties/juce_PropertyComponent.cpp"
     "../../../../../modules/juce_gui_basics/properties/juce_PropertyComponent.h"
     "../../../../../modules/juce_gui_basics/properties/juce_PropertyPanel.cpp"
@@ -1285,6 +1290,7 @@ set_source_files_properties("../../../../../modules/juce_audio_devices/native/ju
 set_source_files_properties("../../../../../modules/juce_audio_devices/native/juce_ios_Audio.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_devices/native/juce_ios_Audio.h" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_devices/native/juce_linux_ALSA.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
+set_source_files_properties("../../../../../modules/juce_audio_devices/native/juce_linux_Bela.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_devices/native/juce_linux_JackAudio.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_devices/native/juce_linux_Midi.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_devices/native/juce_mac_CoreAudio.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
@@ -1467,6 +1473,7 @@ set_source_files_properties("../../../../../modules/juce_audio_processors/format
 set_source_files_properties("../../../../../modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.mm" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.h" PROPERTIES HEADER_FILE_ONLY TRUE)
+set_source_files_properties("../../../../../modules/juce_audio_processors/format_types/juce_LegacyAudioParameter.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_processors/format_types/juce_VST3Common.h" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_processors/format_types/juce_VST3Headers.h" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_audio_processors/format_types/juce_VST3PluginFormat.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
@@ -1560,6 +1567,7 @@ set_source_files_properties("../../../../../modules/juce_core/containers/juce_Pr
 set_source_files_properties("../../../../../modules/juce_core/containers/juce_ReferenceCountedArray.h" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_core/containers/juce_ScopedValueSetter.h" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_core/containers/juce_SortedSet.h" PROPERTIES HEADER_FILE_ONLY TRUE)
+set_source_files_properties("../../../../../modules/juce_core/containers/juce_SparseSet.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_core/containers/juce_SparseSet.h" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_core/containers/juce_Variant.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_core/containers/juce_Variant.h" PROPERTIES HEADER_FILE_ONLY TRUE)
@@ -2224,6 +2232,8 @@ set_source_files_properties("../../../../../modules/juce_gui_basics/properties/j
 set_source_files_properties("../../../../../modules/juce_gui_basics/properties/juce_ButtonPropertyComponent.h" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_gui_basics/properties/juce_ChoicePropertyComponent.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_gui_basics/properties/juce_ChoicePropertyComponent.h" PROPERTIES HEADER_FILE_ONLY TRUE)
+set_source_files_properties("../../../../../modules/juce_gui_basics/properties/juce_MultiChoicePropertyComponent.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
+set_source_files_properties("../../../../../modules/juce_gui_basics/properties/juce_MultiChoicePropertyComponent.h" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_gui_basics/properties/juce_PropertyComponent.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_gui_basics/properties/juce_PropertyComponent.h" PROPERTIES HEADER_FILE_ONLY TRUE)
 set_source_files_properties("../../../../../modules/juce_gui_basics/properties/juce_PropertyPanel.cpp" PROPERTIES HEADER_FILE_ONLY TRUE)

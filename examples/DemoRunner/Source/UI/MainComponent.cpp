@@ -170,7 +170,7 @@ public:
         if (selectedCategory.isEmpty())
         {
             if (isPositiveAndBelow (rowNumber, JUCEDemos::getCategories().size()))
-                g.drawFittedText (JUCEDemos::getCategories()[rowNumber].name,
+                g.drawFittedText (JUCEDemos::getCategories()[(size_t) rowNumber].name,
                                   bounds, Justification::centred, 1);
         }
         else
@@ -178,7 +178,7 @@ public:
             auto& category = JUCEDemos::getCategory (selectedCategory);
 
             if (isPositiveAndBelow (rowNumber, category.demos.size()))
-                g.drawFittedText (category.demos[rowNumber].demoFile.getFileName(),
+                g.drawFittedText (category.demos[(size_t) rowNumber].demoFile.getFileName(),
                                   bounds, Justification::centred, 1);
         }
     }
@@ -191,11 +191,11 @@ public:
 
     void selectedRowsChanged (int row) override
     {
-        if (row == -1)
+        if (row < 0)
             return;
 
         if (selectedCategory.isEmpty())
-            showCategory (JUCEDemos::getCategories()[row].name);
+            showCategory (JUCEDemos::getCategories()[(size_t) row].name);
         else
             demoHolder.setDemo (selectedCategory, row);
     }
@@ -243,20 +243,29 @@ private:
 //==============================================================================
 MainComponent::MainComponent()
 {
-    contentComponent = new DemoContentComponent (*this, [this] (bool isHeavyweight)
+    contentComponent.reset (new DemoContentComponent (*this, [this] (bool isHeavyweight)
     {
        #if (JUCE_ANDROID || JUCE_IOS)
         demosPanel.showOrHide (false);
        #endif
 
+        if (isHeavyweight)
+        {
+           #if JUCE_MAC && USE_COREGRAPHICS_RENDERING
+            setRenderingEngine (1);
+           #else
+            setRenderingEngine (0);
+           #endif
+        }
+
         isShowingHeavyweightDemo = isHeavyweight;
         resized();
-    });
+    }));
 
     demosPanel.setContent (new DemoList (*contentComponent));
     demosPanel.setTitleBarComponent (new SidePanelHeader (*this), true);
 
-    addAndMakeVisible (contentComponent);
+    addAndMakeVisible (contentComponent.get());
     addAndMakeVisible (showDemosButton);
     addAndMakeVisible (demosPanel);
 
@@ -393,6 +402,9 @@ void MainComponent::updateRenderingEngine (int renderingEngineIndex)
 {
     if (renderingEngineIndex == (renderingEngines.size() - 1))
     {
+        if (isShowingHeavyweightDemo)
+            return;
+
         openGLContext.attachTo (*getTopLevelComponent());
     }
     else

@@ -98,8 +98,9 @@ private:
             rendererLabel.setJustificationType (Justification::centredRight);
             rendererLabel.attachToComponent (&rendererSelector, true);
 
-            addAndMakeVisible (audioSettings = new AudioDeviceSelectorComponent (getSharedAudioDeviceManager(),
-                                                                                 0, 256, 0, 256, true, true, true, false));
+            audioSettings.reset (new AudioDeviceSelectorComponent (getSharedAudioDeviceManager(),
+                                                                   0, 256, 0, 256, true, true, true, false));
+            addAndMakeVisible (audioSettings.get());
             audioSettings->setItemHeight (itemHeight);
 
             setOpaque (true);
@@ -155,7 +156,7 @@ private:
         StringArray lookAndFeelNames;
         OwnedArray<LookAndFeel> lookAndFeels;
 
-        ScopedPointer<AudioDeviceSelectorComponent> audioSettings;
+        std::unique_ptr<AudioDeviceSelectorComponent> audioSettings;
 
         //==============================================================================
         void refreshRenderingEngineSelector()

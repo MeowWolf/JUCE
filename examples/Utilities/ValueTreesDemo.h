@@ -25,7 +25,7 @@
 
  name:             ValueTreesDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Showcases value tree features.
 
@@ -109,7 +109,7 @@ public:
     {
         if (items.size() > 0)
         {
-            ScopedPointer<XmlElement> oldOpenness (treeView.getOpennessState (false));
+            std::unique_ptr<XmlElement> oldOpenness (treeView.getOpennessState (false));
 
             for (auto* v : items)
             {
@@ -291,7 +291,7 @@ private:
     TextButton undoButton  { "Undo" },
                redoButton  { "Redo" };
 
-    ScopedPointer<ValueTreeItem> rootItem;
+    std::unique_ptr<ValueTreeItem> rootItem;
     UndoManager undoManager;
 
     void timerCallback() override

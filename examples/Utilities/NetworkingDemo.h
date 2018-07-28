@@ -25,7 +25,7 @@
 
  name:             NetworkingDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Showcases networking features.
 
@@ -101,7 +101,7 @@ public:
         StringPairArray responseHeaders;
         int statusCode = 0;
 
-        ScopedPointer<InputStream> stream (url.createInputStream (false, nullptr, nullptr, {},
+        std::unique_ptr<InputStream> stream (url.createInputStream (false, nullptr, nullptr, {},
                                                                     10000, // timeout in millisecs
                                                                     &responseHeaders, &statusCode));
         if (stream.get() != nullptr)

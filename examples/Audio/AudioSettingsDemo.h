@@ -25,7 +25,7 @@
 
  name:             AudioSettingsDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Displays information about audio devices.
 
@@ -143,7 +143,7 @@ private:
     AudioDeviceManager& audioDeviceManager { getSharedAudioDeviceManager() };
    #endif
 
-    ScopedPointer<AudioDeviceSelectorComponent> audioSetupComp;
+    std::unique_ptr<AudioDeviceSelectorComponent> audioSetupComp;
     TextEditor diagnosticsBox;
 
     void changeListenerCallback (ChangeBroadcaster*) override

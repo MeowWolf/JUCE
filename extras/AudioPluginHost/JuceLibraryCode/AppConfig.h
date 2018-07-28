@@ -16,7 +16,9 @@
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]
 
-// (You can add your own code in this section, and the Projucer will not overwrite it)
+#ifndef JUCE_ANDROID
+ #define JUCE_MODAL_LOOPS_PERMITTED   (! JUCE_IOS)
+#endif
 
 // [END_USER_CODE_SECTION]
 
@@ -92,6 +94,10 @@
  //#define JUCE_JACK 0
 #endif
 
+#ifndef    JUCE_BELA
+ //#define JUCE_BELA 0
+#endif
+
 #ifndef    JUCE_USE_ANDROID_OBOE
  //#define JUCE_USE_ANDROID_OBOE 0
 #endif
@@ -144,6 +150,10 @@
 
 #ifndef    JUCE_PLUGINHOST_AU
  #define   JUCE_PLUGINHOST_AU 1
+#endif
+
+#ifndef    JUCE_PLUGINHOST_LADSPA
+ #define   JUCE_PLUGINHOST_LADSPA 1
 #endif
 
 //==============================================================================

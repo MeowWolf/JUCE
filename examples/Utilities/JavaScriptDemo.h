@@ -25,7 +25,7 @@
 
  name:             JavaScriptDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Showcases JavaScript features.
 
@@ -154,7 +154,7 @@ public:
 
 private:
     CodeDocument codeDocument;
-    ScopedPointer<CodeEditorComponent> editor;
+    std::unique_ptr<CodeEditorComponent> editor;
     TextEditor outputDisplay;
 
     void codeDocumentTextInserted (const String&, int) override    { startTimer (300); }

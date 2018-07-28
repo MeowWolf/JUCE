@@ -25,7 +25,7 @@
 
  name:             WebBrowserDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Displays a web browser.
 
@@ -131,7 +131,7 @@ public:
     }
 
 private:
-    ScopedPointer<DemoBrowserComponent> webView;
+    std::unique_ptr<DemoBrowserComponent> webView;
 
     TextEditor addressTextBox;
 

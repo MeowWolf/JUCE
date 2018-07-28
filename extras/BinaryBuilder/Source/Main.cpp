@@ -81,7 +81,7 @@ static int addFile (const File& file,
     cppStream << "const char* " << classname << "::" << name
               << " = (const char*) temp" << tempNum << ";\r\n\r\n";
 
-    return mb.getSize();
+    return (int) mb.getSize();
 }
 
 static bool isHiddenFile (const File& f, const File& root)
@@ -159,7 +159,7 @@ int main (int argc, char* argv[])
     headerFile.deleteFile();
     cppFile.deleteFile();
 
-    ScopedPointer<OutputStream> header (headerFile.createOutputStream());
+    std::unique_ptr<OutputStream> header (headerFile.createOutputStream());
 
     if (header == nullptr)
     {
@@ -168,7 +168,7 @@ int main (int argc, char* argv[])
         return 0;
     }
 
-    ScopedPointer<OutputStream> cpp (cppFile.createOutputStream());
+    std::unique_ptr<OutputStream> cpp (cppFile.createOutputStream());
 
     if (cpp == nullptr)
     {

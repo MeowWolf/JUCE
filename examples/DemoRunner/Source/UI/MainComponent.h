@@ -30,10 +30,6 @@
 #include "DemoContentComponent.h"
 
 //==============================================================================
-/*
-    This component lives inside our window, and this is where you should put all
-    your controls and content.
-*/
 class MainComponent    : public Component
 {
 public:
@@ -62,7 +58,7 @@ private:
     void updateRenderingEngine (int index);
 
     //==============================================================================
-    ScopedPointer<DemoContentComponent> contentComponent;
+    std::unique_ptr<DemoContentComponent> contentComponent;
     SidePanel demosPanel  { "Demos", 250, true };
 
     OpenGLContext openGLContext;

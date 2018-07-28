@@ -25,7 +25,7 @@
 
  name:             CodeEditorDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Displays a code editor.
 
@@ -104,7 +104,7 @@ private:
     CPlusPlusCodeTokeniser cppTokeniser;
 
     // the editor component
-    ScopedPointer<CodeEditorComponent> editor;
+    std::unique_ptr<CodeEditorComponent> editor;
 
     FilenameComponent fileChooser { "File", {}, true, false, false, "*.cpp;*.h;*.hpp;*.c;*.mm;*.m", {},
                                     "Choose a C++ file to open it in the editor" };

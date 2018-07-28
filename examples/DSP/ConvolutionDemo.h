@@ -25,7 +25,7 @@
 
  name:             ConvolutionDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Convolution demo using the DSP module.
 
@@ -88,7 +88,7 @@ struct ConvolutionDemoDSP
                 auto selectedType = cabinetTypeParameter->getCurrentSelectedID();
                 auto assetName = (selectedType == 2 ? "guitar_amp.wav" : "cassette_recorder.wav");
 
-                ScopedPointer<InputStream> assetInputStream (createAssetInputStream (assetName));
+                std::unique_ptr<InputStream> assetInputStream (createAssetInputStream (assetName));
                 if (assetInputStream != nullptr)
                 {
                     currentCabinetData.reset();

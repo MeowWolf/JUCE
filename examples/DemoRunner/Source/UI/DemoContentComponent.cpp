@@ -45,7 +45,7 @@ struct DemoContent    : public Component
 
         if (comp != nullptr)
         {
-            addAndMakeVisible (comp);
+            addAndMakeVisible (comp.get());
             resized();
         }
     }
@@ -54,7 +54,7 @@ struct DemoContent    : public Component
     void showHomeScreen()                       { setComponent (createIntroDemo()); }
 
 private:
-    ScopedPointer<Component> comp;
+    std::unique_ptr<Component> comp;
 };
 
 //==============================================================================
@@ -69,7 +69,7 @@ struct CodeContent    : public Component
         codeEditor.setScrollbarThickness (8);
 
         lookAndFeelChanged();
-    };
+    }
 
     void resized() override
     {
@@ -105,13 +105,15 @@ DemoContentComponent::DemoContentComponent (Component& mainComponent, std::funct
     : TabbedComponent (TabbedButtonBar::Orientation::TabsAtTop),
       demoChangedCallback (callback)
 {
-    addTab ("Demo",     Colours::transparentBlack, demoContent = new DemoContent(), false);
+    demoContent.reset (new DemoContent());
+    addTab ("Demo",     Colours::transparentBlack, demoContent.get(), false);
 
    #if ! (JUCE_ANDROID || JUCE_IOS)
-    addTab ("Code",     Colours::transparentBlack, codeContent = new CodeContent(), false);
+    codeContent.reset (new CodeContent());
+    addTab ("Code",     Colours::transparentBlack, codeContent.get(), false);
    #endif
 
-    addTab ("Settings", Colours::transparentBlack, new SettingsContent (dynamic_cast<MainComponent&> (mainComponent)),           true);
+    addTab ("Settings", Colours::transparentBlack, new SettingsContent (dynamic_cast<MainComponent&> (mainComponent)), true);
 
     setTabBarDepth (40);
     lookAndFeelChanged();
@@ -135,7 +137,7 @@ void DemoContentComponent::setDemo (const String& category, int selectedDemoInde
         && (currentDemoIndex == selectedDemoIndex))
         return;
 
-    auto demo = JUCEDemos::getCategory (category).demos[selectedDemoIndex];
+    auto demo = JUCEDemos::getCategory (category).demos[(size_t) selectedDemoIndex];
 
    #if ! (JUCE_ANDROID || JUCE_IOS)
     codeContent->document.replaceAllContent (trimPIP (demo.demoFile.loadFileAsString()));

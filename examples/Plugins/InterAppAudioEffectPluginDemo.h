@@ -25,7 +25,7 @@
 
  name:             InterAppAudioEffectPlugin
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Inter-app audio effect plugin.
 
@@ -175,7 +175,7 @@ public:
 
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override
     {
-        if (layouts.getMainInputChannelSet() != AudioChannelSet::stereo())
+        if (layouts.getMainInputChannels() > 2)
             return false;
 
         if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
@@ -236,13 +236,13 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override
     {
-        auto xml = ScopedPointer<XmlElement> (parameters.state.createXml());
+        auto xml = std::unique_ptr<XmlElement> (parameters.state.createXml());
         copyXmlToBinary (*xml, destData);
     }
 
     void setStateInformation (const void* data, int sizeInBytes) override
     {
-        auto xmlState = ScopedPointer<XmlElement> (getXmlFromBinary (data, sizeInBytes));
+        auto xmlState = std::unique_ptr<XmlElement> (getXmlFromBinary (data, sizeInBytes));
 
         if (xmlState.get() != nullptr)
             if (xmlState->hasTagName (parameters.state.getType()))

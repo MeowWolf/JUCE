@@ -25,7 +25,7 @@
 
  name:             AUv3SynthPlugin
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      AUv3 synthesiser audio plugin.
 
@@ -195,7 +195,7 @@ public:
 
         if (auto* assetStream = createAssetInputStream ("proaudio.path"))
         {
-            ScopedPointer<InputStream> fileStream (assetStream);
+            std::unique_ptr<InputStream> fileStream (assetStream);
 
             Path proAudioPath;
             proAudioPath.loadPathFromStream (*fileStream);
@@ -323,7 +323,7 @@ public:
     //==============================================================================
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override
     {
-        return (layouts.getMainOutputChannels() == 2);
+        return (layouts.getMainOutputChannels() <= 2);
     }
 
     void prepareToPlay (double sampleRate, int estimatedMaxSizeOfBuffer) override
@@ -415,7 +415,7 @@ private:
 
     void loadNewSample (InputStream* soundBuffer, const char* format)
     {
-        ScopedPointer<AudioFormatReader> formatReader (formatManager.findFormatForFileExtension (format)->createReaderFor (soundBuffer, true));
+        std::unique_ptr<AudioFormatReader> formatReader (formatManager.findFormatForFileExtension (format)->createReaderFor (soundBuffer, true));
 
         BigInteger midiNotes;
         midiNotes.setRange (0, 126, true);
@@ -431,7 +431,7 @@ private:
         auto* stream = new MemoryOutputStream (mb, true);
 
         {
-            ScopedPointer<AudioFormatWriter> writer (formatManager.findFormatForFileExtension ("wav")->createWriterFor (stream, lastSampleRate, 1, 16,
+            std::unique_ptr<AudioFormatWriter> writer (formatManager.findFormatForFileExtension ("wav")->createWriterFor (stream, lastSampleRate, 1, 16,
                                                                                                                           StringPairArray(), 0));
             writer->writeFromAudioSampleBuffer (currentRecording, 0, currentRecording.getNumSamples());
             writer->flush();

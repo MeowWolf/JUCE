@@ -93,9 +93,11 @@ public:
         // (This function call is for one of the demos, which involves launching a child process)
         if (invokeChildProcessDemo (commandLine))
             return;
+      #else
+        ignoreUnused (commandLine);
       #endif
 
-        mainWindow = new MainAppWindow (getApplicationName());
+        mainWindow.reset (new MainAppWindow (getApplicationName()));
     }
 
     void backButtonPressed() override    { mainWindow->getMainComponent().getSidePanel().showOrHide (false); }
@@ -120,6 +122,7 @@ private:
 
            #if JUCE_IOS || JUCE_ANDROID
             setFullScreen (true);
+            Desktop::getInstance().setOrientationsEnabled (Desktop::rotatedClockwise | Desktop::rotatedAntiClockwise);
            #else
             setBounds ((int) (0.1f * getParentWidth()),
                        (int) (0.1f * getParentHeight()),
@@ -131,7 +134,7 @@ private:
             setVisible (true);
 
            #if JUCE_WINDOWS || JUCE_LINUX || JUCE_MAC
-            taskbarIcon = new DemoTaskbarComponent();
+            taskbarIcon.reset (new DemoTaskbarComponent());
            #endif
         }
 
@@ -141,12 +144,12 @@ private:
         MainComponent& getMainComponent()    { return *dynamic_cast<MainComponent*> (getContentComponent()); }
 
     private:
-        ScopedPointer<Component> taskbarIcon;
+        std::unique_ptr<Component> taskbarIcon;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainAppWindow)
     };
 
-    ScopedPointer<MainAppWindow> mainWindow;
+    std::unique_ptr<MainAppWindow> mainWindow;
 };
 
 //==============================================================================

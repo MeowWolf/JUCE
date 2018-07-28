@@ -25,7 +25,7 @@
 
  name:             FontsDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Displays different font styles and types.
 
@@ -223,7 +223,7 @@ private:
     ComboBox styleBox;
 
     StretchableLayoutManager verticalLayout;
-    ScopedPointer<StretchableLayoutResizerBar> verticalDividerBar;
+    std::unique_ptr<StretchableLayoutResizerBar> verticalDividerBar;
 
     //==============================================================================
     void refreshPreviewBoxFont()

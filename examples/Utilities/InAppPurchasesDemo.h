@@ -25,7 +25,7 @@
 
  name:             InAppPurchasesDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Showcases in-app purchases features. To run this demo you must enable the
                    "In-App Purchases Capability" option in the Projucer exporter.
@@ -380,13 +380,10 @@ public:
 
                 setInterceptsMouseClicks (! hasBeenPurchased, ! hasBeenPurchased);
 
-                auto imageFile = getAssetsDirectory().getChildFile ("Purchases").getChildFile (imageResourceName);
-
+                if (auto* assetStream = createAssetInputStream (String ("Purchases/" + String (imageResourceName)).toRawUTF8()))
                 {
-                    ScopedPointer<FileInputStream> imageData (imageFile.createInputStream());
-
-                    if (imageData.get() != nullptr)
-                        avatar = PNGImageFormat().decodeImage (*imageData);
+                    std::unique_ptr<InputStream> fileStream (assetStream);
+                    avatar = PNGImageFormat().decodeImage (*fileStream);
                 }
             }
         }
@@ -552,17 +549,20 @@ private:
     //==============================================================================
     void playStopPhrase()
     {
-        MemoryOutputStream resourceName;
-
         auto idx = voiceListBox.getSelectedRow();
         if (isPositiveAndBelow (idx, soundNames.size()))
         {
-            resourceName << soundNames[idx] << phraseListBox.getSelectedRow() << ".ogg";
+            auto assetName = "Purchases/" + soundNames[idx] + String (phraseListBox.getSelectedRow()) + ".ogg";
 
-            auto file = getAssetsDirectory().getChildFile ("Purchases").getChildFile (resourceName.toString().toRawUTF8());
+            if (auto* assetStream = createAssetInputStream (assetName.toRawUTF8()))
+            {
+                std::unique_ptr<InputStream> fileStream (assetStream);
 
-            if (file.exists())
-                player.play (file);
+                currentPhraseData.reset();
+                fileStream->readIntoMemoryBlock (currentPhraseData);
+
+                player.play (currentPhraseData.getData(), currentPhraseData.getSize());
+            }
         }
     }
 
@@ -571,7 +571,7 @@ private:
 
     Label phraseLabel                          { "phraseLabel", NEEDS_TRANS ("Phrases:") };
     ListBox phraseListBox                      { "phraseListBox" };
-    ScopedPointer<ListBoxModel> phraseModel  { new PhraseModel() };
+    std::unique_ptr<ListBoxModel> phraseModel  { new PhraseModel() };
     TextButton playStopButton                  { "Play" };
 
     SoundPlayer player;
@@ -580,7 +580,9 @@ private:
 
     Label voiceLabel                           { "voiceLabel", NEEDS_TRANS ("Voices:") };
     ListBox voiceListBox                       { "voiceListBox" };
-    ScopedPointer<VoiceModel> voiceModel     { new VoiceModel (purchases) };
+    std::unique_ptr<VoiceModel> voiceModel     { new VoiceModel (purchases) };
+
+    MemoryBlock currentPhraseData;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (InAppPurchasesDemo)
 };

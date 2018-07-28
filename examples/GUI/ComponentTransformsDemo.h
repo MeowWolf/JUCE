@@ -25,7 +25,7 @@
 
  name:             ComponentTransformsDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Applies transformations to components.
 
@@ -53,7 +53,7 @@ class ComponentTransformsDemo  : public Component
 public:
     ComponentTransformsDemo()
     {
-        content.reset (new WidgetsDemo());
+        content.reset (new WidgetsDemo (true));
         addAndMakeVisible (content.get());
         content->setSize (750, 500);
 
@@ -94,7 +94,7 @@ public:
     }
 
 private:
-    ScopedPointer<Component> content;
+    std::unique_ptr<Component> content;
 
     struct CornerDragger  : public Component
     {

@@ -25,7 +25,7 @@
 
  name:             XMLandJSONDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Reads XML and JSON files.
 
@@ -303,13 +303,13 @@ private:
     CodeEditorComponent codeDocumentComponent  { codeDocument, nullptr };
     TreeView resultsTree;
 
-    ScopedPointer<TreeViewItem> rootItem;
-    ScopedPointer<XmlElement> parsedXml;
+    std::unique_ptr<TreeViewItem> rootItem;
+    std::unique_ptr<XmlElement> parsedXml;
     TextEditor errorMessage;
 
     void rebuildTree()
     {
-        ScopedPointer<XmlElement> openness;
+        std::unique_ptr<XmlElement> openness;
 
         if (rootItem.get() != nullptr)
             openness.reset (rootItem->getOpennessState());

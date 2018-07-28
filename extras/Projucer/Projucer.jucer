@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="M70qfTRRk" name="Projucer" projectType="guiapp" juceFolder="../../juce"
-              jucerVersion="5.3.0" version="5.3.0" bundleIdentifier="com.juce.theprojucer"
+              jucerVersion="5.3.2" version="5.3.2" bundleIdentifier="com.juce.theprojucer"
               defines="" splashScreenColour="Dark" displaySplashScreen="0"
               reportAppUsage="0" companyName="ROLI Ltd." companyCopyright="ROLI Ltd."
               cppLanguageStandard="11">
@@ -117,6 +117,8 @@
               file="Source/Application/Windows/jucer_FloatingToolWindow.h"/>
         <FILE id="dqgeFF" name="jucer_GlobalPathsWindowComponent.h" compile="0"
               resource="0" file="Source/Application/Windows/jucer_GlobalPathsWindowComponent.h"/>
+        <FILE id="snVgLV" name="jucer_PIPCreatorWindowComponent.h" compile="0"
+              resource="0" file="Source/Application/Windows/jucer_PIPCreatorWindowComponent.h"/>
         <FILE id="RyqPBc" name="jucer_SVGPathDataWindowComponent.h" compile="0"
               resource="0" file="Source/Application/Windows/jucer_SVGPathDataWindowComponent.h"/>
         <FILE id="ideTas" name="jucer_TranslationToolWindowComponent.h" compile="0"
@@ -255,8 +257,12 @@
               resource="1" file="Source/BinaryData/Templates/jucer_OpenGLComponentTemplate.cpp"/>
         <FILE id="Edyh5d" name="jucer_OpenGLComponentTemplate.h" compile="0"
               resource="1" file="Source/BinaryData/Templates/jucer_OpenGLComponentTemplate.h"/>
+        <FILE id="BVHe2G" name="jucer_PIPAudioProcessorTemplate.h" compile="0"
+              resource="1" file="Source/BinaryData/Templates/jucer_PIPAudioProcessorTemplate.h"/>
         <FILE id="aUkNL5" name="jucer_PIPMain.cpp" compile="0" resource="1"
               file="Source/BinaryData/Templates/jucer_PIPMain.cpp"/>
+        <FILE id="WqDCf0" name="jucer_PIPTemplate.h" compile="0" resource="1"
+              file="Source/BinaryData/Templates/jucer_PIPTemplate.h"/>
       </GROUP>
       <FILE id="oXM3fR" name="colourscheme_dark.xml" compile="0" resource="1"
             file="Source/BinaryData/colourscheme_dark.xml"/>
@@ -510,6 +516,8 @@
             resource="0" file="Source/LiveBuildEngine/jucer_CompileEngineServer.cpp"/>
       <FILE id="RraER0" name="jucer_CompileEngineServer.h" compile="0" resource="0"
             file="Source/LiveBuildEngine/jucer_CompileEngineServer.h"/>
+      <FILE id="hKqvP1" name="jucer_CompileEngineSettings.h" compile="0"
+            resource="0" file="Source/LiveBuildEngine/jucer_CompileEngineSettings.h"/>
       <FILE id="YlfzAt" name="jucer_CppHelpers.h" compile="0" resource="0"
             file="Source/LiveBuildEngine/jucer_CppHelpers.h"/>
       <FILE id="yW3rHq" name="jucer_DiagnosticMessage.h" compile="0" resource="0"
@@ -709,7 +717,7 @@
             resource="0" file="Source/Wizards/jucer_TemplateThumbnailsComponent.h"/>
     </GROUP>
   </MAINGROUP>
-  <JUCEOPTIONS JUCE_LOG_ASSERTIONS="1" JUCE_USE_CURL="1"/>
+  <JUCEOPTIONS JUCE_LOG_ASSERTIONS="1" JUCE_USE_CURL="1" JUCE_ALLOW_STATIC_NULL_VARIABLES="0"/>
   <MODULES>
     <MODULE id="juce_analytics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_core" showAllCode="1"/>

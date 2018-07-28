@@ -25,7 +25,7 @@
 
  name:             UnitTestsDemo
  version:          1.0.0
- vendor:           juce
+ vendor:           JUCE
  website:          http://juce.com
  description:      Performs unit tests.
 
@@ -220,7 +220,7 @@ struct UnitTestClasses
         }
 
     private:
-        ScopedPointer<TestRunnerThread> currentTestThread;
+        std::unique_ptr<TestRunnerThread> currentTestThread;
 
         TextButton startTestButton { "Run Unit Tests..." };
         ComboBox categoriesBox;
